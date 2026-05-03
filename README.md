@@ -77,7 +77,7 @@ Document indexing and long summary requests create a DB-backed `jobs` row, enque
 
 ## 8. Model Server Design
 
-The model server owns model loading and inference. API and worker services call it over HTTP. If `sentence-transformers` cannot be loaded in a local test environment, deterministic fallback embeddings keep tests runnable; Docker installs the real model dependencies.
+The model server owns model loading and inference. API and worker services call it over HTTP. Docker installs the PyTorch CPU wheel before `sentence-transformers` and fails the image build if `nvidia-*` or `triton` packages are present. If `sentence-transformers` cannot be loaded in a local test environment, deterministic fallback embeddings keep unit tests runnable; production Docker runs with fallback disabled.
 
 ## 9. Cache And Idempotency
 
