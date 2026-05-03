@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: ai-docops-config
+  namespace: ai-docops
+data:
+  APP_ENV: local-k8s
+  LOG_LEVEL: INFO
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+  POSTGRES_DB: app
+  POSTGRES_USER: app
+  DATABASE_URL: postgresql+asyncpg://app:app@postgres:5432/app
+  REDIS_URL: redis://redis:6379/0
+  CELERY_BROKER_URL: redis://redis:6379/1
+  CELERY_RESULT_BACKEND: redis://redis:6379/2
+  MODEL_SERVER_URL: http://model-server:9000
+  MODEL_DEVICE: cpu
+  READINESS_CHECKS_ENABLED: "true"
+  ALLOW_DEV_AUTH_FALLBACK: "false"

@@ -1,7 +1,10 @@
-.PHONY: up down test lint migrate seed benchmark
+.PHONY: up up-obs down test lint migrate seed benchmark openapi
 
 up:
 	docker compose up --build
+
+up-obs:
+	docker compose --profile obs up --build
 
 down:
 	docker compose down
@@ -21,3 +24,6 @@ seed:
 benchmark:
 	python scripts/benchmark_summary.py
 	python scripts/benchmark_search.py
+
+openapi:
+	python scripts/export_openapi.py

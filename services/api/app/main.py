@@ -2,7 +2,12 @@
 
 from fastapi import FastAPI
 
+from .api.routes_documents import router as documents_router
 from .api.routes_health import router as health_router
+from .api.routes_jobs import router as jobs_router
+from .api.routes_predictions import router as predictions_router
+from .api.routes_search import router as search_router
+from .api.routes_summaries import router as summaries_router
 from .core.config import get_settings
 from .core.errors import add_exception_handlers
 from .core.logging import configure_logging
@@ -27,6 +32,11 @@ def create_app() -> FastAPI:
     app.add_middleware(RequestIdMiddleware)
     add_exception_handlers(app)
     app.include_router(health_router)
+    app.include_router(documents_router)
+    app.include_router(summaries_router)
+    app.include_router(predictions_router)
+    app.include_router(search_router)
+    app.include_router(jobs_router)
     app.add_api_route("/metrics", metrics, methods=["GET"], include_in_schema=False)
     return app
 

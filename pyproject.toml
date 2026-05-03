@@ -15,18 +15,28 @@ dependencies = [
   "pydantic>=2.7",
   "pydantic-settings>=2.3",
   "redis>=5.0",
-  "sentence-transformers>=3.0",
   "sqlalchemy>=2.0",
   "uvicorn[standard]>=0.30",
 ]
 
 [project.optional-dependencies]
+model = [
+  "sentence-transformers>=3.0",
+]
 dev = [
   "mypy>=1.10",
   "pytest>=8.2",
   "pytest-asyncio>=0.23",
   "ruff>=0.5",
 ]
+
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["services*", "libs*"]
+namespaces = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
@@ -44,6 +54,7 @@ line-length = 100
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["B008"]
 
 [tool.mypy]
 python_version = "3.12"

@@ -25,3 +25,10 @@ class InferenceRequestRepository:
         """List inference records for one tenant."""
         result = await self.session.execute(select_inference_requests_for_tenant(tenant_id))
         return list(result.scalars())
+
+    async def add(self, inference_request: InferenceRequest) -> InferenceRequest:
+        """Add an inference request audit row."""
+        self.session.add(inference_request)
+        await self.session.flush()
+        await self.session.refresh(inference_request)
+        return inference_request

@@ -7,6 +7,9 @@ services:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      READINESS_CHECKS_ENABLED: "true"
+      ALLOW_DEV_AUTH_FALLBACK: "false"
     depends_on:
       - postgres
       - redis
@@ -52,6 +55,29 @@ services:
     image: redis:7
     ports:
       - "6379:6379"
+
+  prometheus:
+    image: prom/prometheus:latest
+    profiles: ["obs"]
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./infra/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - ./infra/prometheus/alert_rules.yml:/etc/prometheus/alert_rules.yml:ro
+
+  grafana:
+    image: grafana/grafana:latest
+    profiles: ["obs"]
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./infra/grafana/dashboards:/var/lib/grafana/dashboards:ro
+
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    profiles: ["obs"]
+    ports:
+      - "16686:16686"
 
 volumes:
   pg-data:

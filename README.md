@@ -47,13 +47,20 @@ The intended runtime shape is:
 cp .env.example .env
 make test
 make lint
+make up
+make migrate
+make seed
 ```
 
-Runtime services will be filled in across later phases.
+The development API key seeded by `make seed` is:
+
+```text
+ak_dev_tenant_a_123456
+```
 
 ## 6. API Examples
 
-Planned core endpoints:
+Core endpoints:
 
 - `POST /v1/documents`
 - `POST /v1/documents/{document_id}/index-jobs`
@@ -66,11 +73,11 @@ Planned core endpoints:
 
 ## 7. Async Job Flow
 
-Document indexing and long summary requests are intended to create a DB-backed job, enqueue Celery work, update job status, and expose job results through read endpoints.
+Document indexing and long summary requests create a DB-backed `jobs` row, enqueue Celery work, update job status, and expose results through `/v1/jobs/{job_id}` and `/v1/summary-jobs/{job_id}`.
 
 ## 8. Model Server Design
 
-The model server owns model loading and inference. API and worker services call it over HTTP.
+The model server owns model loading and inference. API and worker services call it over HTTP. If `sentence-transformers` cannot be loaded in a local test environment, deterministic fallback embeddings keep tests runnable; Docker installs the real model dependencies.
 
 ## 9. Cache And Idempotency
 
@@ -82,19 +89,33 @@ All `/v1/*` APIs will require `X-API-Key`. API keys are stored as hashes. Resour
 
 ## 11. Observability
 
-Planned observability includes JSON logs, Prometheus metrics, OpenTelemetry traces, Grafana dashboards, and Jaeger trace inspection.
+Observability includes JSON logs, Prometheus-compatible `/metrics` endpoints, Prometheus scrape config, alert rules, a Grafana dashboard skeleton, and a Jaeger service in the observability profile.
 
 ## 12. Failure Scenarios
 
-Failure scenarios will cover model server down, Redis down, DB down, and queue backlog.
+Failure scripts live under `scripts/` and cover model server down, Redis down, and DB down. Expected behavior is documented in `docs/failure-scenarios.md`.
 
 ## 13. Benchmark Results
 
-Benchmark results will be recorded after implementation. Placeholder targets are documented in `docs/benchmark-report.md`.
+Benchmark scripts live under `scripts/benchmark_summary.py` and `scripts/benchmark_search.py`. Current smoke benchmark results are recorded in `docs/benchmark-report.md`.
 
 ## 14. Kubernetes Deployment
 
-Local Kubernetes manifests will live under `infra/k8s`.
+Local Kubernetes manifests live under `infra/k8s`.
+
+```bash
+kind create cluster --name ai-docops
+docker build -f services/api/Dockerfile -t ai-docops-api:local .
+docker build -f services/model_server/Dockerfile -t ai-docops-model-server:local .
+docker build -f services/worker/Dockerfile -t ai-docops-worker:local .
+kind load docker-image ai-docops-api:local --name ai-docops
+kind load docker-image ai-docops-model-server:local --name ai-docops
+kind load docker-image ai-docops-worker:local --name ai-docops
+kubectl apply -f infra/k8s/
+kubectl port-forward -n ai-docops service/api 8000:8000
+```
+
+This local HPA example is for Kubernetes manifest demonstration only. Real AI model scaling should consider model latency, queue depth, GPU utilization, and cost metrics, not CPU alone.
 
 ## 15. ADRs
 

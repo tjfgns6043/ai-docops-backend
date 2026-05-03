@@ -30,3 +30,8 @@ class ChunkRepository:
         """List chunks for one tenant-owned document."""
         result = await self.session.execute(select_chunks_for_document(tenant_id, document_id))
         return list(result.scalars())
+
+    async def add_many(self, chunks: list[DocumentChunk]) -> None:
+        """Add chunks."""
+        self.session.add_all(chunks)
+        await self.session.flush()

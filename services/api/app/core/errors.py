@@ -7,6 +7,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from .metrics import observe_api_error
+
 
 class ApiError(Exception):
     """Application error rendered with the public error envelope."""
@@ -29,6 +31,7 @@ def get_request_id(request: Request) -> str:
 
 def error_response(status_code: int, code: str, message: str, request_id: str) -> JSONResponse:
     """Build a consistent error envelope."""
+    observe_api_error(code)
     return JSONResponse(
         status_code=status_code,
         content={

@@ -1,13 +1,14 @@
 """Development seed data."""
 
 import asyncio
+import sys
+from pathlib import Path
 from uuid import UUID
 
 from sqlalchemy.dialects.postgresql import insert
 
-from libs.common.hashing import hash_api_key
-from services.api.app.db.models import ApiKey, Tenant
-from services.api.app.db.session import make_session_factory
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT))
 
 TENANT_A_ID = UUID("00000000-0000-0000-0000-00000000000a")
 OWNER_A_ID = UUID("00000000-0000-0000-0000-0000000000aa")
@@ -16,6 +17,10 @@ DEV_API_KEY = "ak_dev_tenant_a_123456"
 
 async def seed() -> None:
     """Seed tenant-a and a hashed development API key."""
+    from libs.common.hashing import hash_api_key
+    from services.api.app.db.models import ApiKey, Tenant
+    from services.api.app.db.session import make_session_factory
+
     session_factory = make_session_factory()
     async with session_factory() as session:
         await session.execute(

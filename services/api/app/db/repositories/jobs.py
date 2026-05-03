@@ -28,3 +28,15 @@ class JobRepository:
         """Return a tenant-owned job by ID."""
         result = await self.session.execute(select_job_by_id(tenant_id, job_id))
         return result.scalar_one_or_none()
+
+    async def get_by_idempotency_key(self, tenant_id: UUID, key: str) -> Job | None:
+        """Return a tenant-owned job by idempotency key."""
+        result = await self.session.execute(select_job_by_idempotency_key(tenant_id, key))
+        return result.scalar_one_or_none()
+
+    async def add(self, job: Job) -> Job:
+        """Add a job."""
+        self.session.add(job)
+        await self.session.flush()
+        await self.session.refresh(job)
+        return job

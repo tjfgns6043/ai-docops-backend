@@ -18,7 +18,15 @@ def test_ready_returns_placeholder_checks() -> None:
     response = client.get("/ready")
 
     assert response.status_code == 200
-    assert response.json() == {"status": "ready", "service": "api", "checks": {}}
+    assert response.json() == {
+        "status": "ready",
+        "service": "api",
+        "checks": {
+            "database": "skipped",
+            "redis": "skipped",
+            "model_server": "skipped",
+        },
+    }
 
 
 def test_request_id_is_echoed() -> None:

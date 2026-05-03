@@ -27,3 +27,10 @@ class DocumentRepository:
         """Return a tenant-owned document by ID."""
         result = await self.session.execute(select_document_by_id(tenant_id, document_id))
         return result.scalar_one_or_none()
+
+    async def add(self, document: Document) -> Document:
+        """Add a document."""
+        self.session.add(document)
+        await self.session.flush()
+        await self.session.refresh(document)
+        return document

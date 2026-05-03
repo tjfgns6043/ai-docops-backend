@@ -26,6 +26,26 @@ class Vector(UserDefinedType[list[float]]):
         """Return the SQL column type."""
         return f"vector({self.dimensions})"
 
+    def bind_processor(self, dialect: Any) -> Any:
+        """Convert Python vectors to pgvector's text input format."""
+
+        def process(value: list[float] | None) -> str | None:
+            if value is None:
+                return None
+            return "[" + ",".join(str(float(item)) for item in value) + "]"
+
+        return process
+
+    def result_processor(self, dialect: Any, coltype: Any) -> Any:
+        """Convert pgvector text output back to a Python list when needed."""
+
+        def process(value: str | list[float] | None) -> list[float] | None:
+            if value is None or isinstance(value, list):
+                return value
+            return [float(item) for item in value.strip("[]").split(",") if item]
+
+        return process
+
 
 class Base(DeclarativeBase):
     """Declarative base for API models."""

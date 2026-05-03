@@ -1,12 +1,14 @@
 """Async database session setup."""
 
 from collections.abc import AsyncIterator
+from functools import lru_cache
 
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from ..core.config import get_settings
 
 
+@lru_cache
 def make_session_factory(database_url: str | None = None) -> async_sessionmaker[AsyncSession]:
     """Create an async session factory.
 
