@@ -111,9 +111,15 @@ docker build -f services/worker/Dockerfile -t ai-docops-worker:local .
 kind load docker-image ai-docops-api:local --name ai-docops
 kind load docker-image ai-docops-model-server:local --name ai-docops
 kind load docker-image ai-docops-worker:local --name ai-docops
+kubectl apply -f infra/k8s/namespace.yaml
 kubectl apply -f infra/k8s/
+kubectl wait --for=condition=ready pod --all -n ai-docops --timeout=300s
+kubectl exec -n ai-docops deployment/api -- alembic upgrade head
+kubectl exec -n ai-docops deployment/api -- python scripts/seed_dev_data.py
 kubectl port-forward -n ai-docops service/api 8000:8000
 ```
+
+Verified locally with kind on 2026-05-03: API, model-server, worker, PostgreSQL, and Redis pods reached `Ready`; API `/ready` reported database, Redis, and model-server as `ok`.
 
 This local HPA example is for Kubernetes manifest demonstration only. Real AI model scaling should consider model latency, queue depth, GPU utilization, and cost metrics, not CPU alone.
 
