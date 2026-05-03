@@ -25,6 +25,7 @@ smoke:
 	python scripts/smoke_compose.py
 
 benchmark:
+	python scripts/benchmark_health.py
 	python scripts/benchmark_summary.py
 	python scripts/benchmark_search.py
 

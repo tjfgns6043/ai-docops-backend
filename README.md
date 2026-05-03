@@ -106,7 +106,7 @@ Failure scripts live under `scripts/` and cover model server down, Redis down, a
 
 ## 13. Benchmark Results
 
-Benchmark scripts live under `scripts/benchmark_summary.py` and `scripts/benchmark_search.py`. Current smoke benchmark results are recorded in `docs/benchmark-report.md`.
+Benchmark scripts live under `scripts/benchmark_health.py`, `scripts/benchmark_summary.py`, and `scripts/benchmark_search.py`. Current smoke benchmark results are recorded in `docs/benchmark-report.md`.
 
 ## 14. Kubernetes Deployment
 
@@ -145,7 +145,7 @@ Architecture decisions live in `docs/adr`.
 
 ## 17. Future Work
 
-- Add measured benchmark results.
+- Add concurrent load tests with a larger document corpus.
 - Add deeper dashboard panels.
 - Add production-grade secret management.
 - Evaluate dedicated vector databases for larger datasets.
