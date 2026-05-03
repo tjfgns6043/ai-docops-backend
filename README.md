@@ -50,6 +50,7 @@ make lint
 make up
 make migrate
 make seed
+make smoke
 ```
 
 The development API key seeded by `make seed` is:
@@ -70,6 +71,14 @@ Core endpoints:
 - `POST /v1/search`
 - `POST /v1/rag/answers`
 - `GET /v1/jobs/{job_id}`
+
+Run the automated end-to-end smoke flow against a running Compose stack:
+
+```bash
+make smoke
+```
+
+The smoke test verifies readiness, summary caching, prototype classification, document upload, async indexing, semantic search, and extractive RAG citations.
 
 ## 7. Async Job Flow
 
