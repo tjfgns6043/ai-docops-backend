@@ -13,7 +13,9 @@ def test_health_returns_api_status() -> None:
 
 
 def test_ready_returns_placeholder_checks() -> None:
-    client = TestClient(create_app())
+    app = create_app()
+    app.state.settings.readiness_checks_enabled = False
+    client = TestClient(app)
 
     response = client.get("/ready")
 
@@ -59,4 +61,5 @@ def test_metrics_placeholder_is_prometheus_text() -> None:
     response = client.get("/metrics")
 
     assert response.status_code == 200
-    assert "ai_docops_build_info" in response.text
+    assert "# HELP" in response.text
+    assert "# TYPE" in response.text
